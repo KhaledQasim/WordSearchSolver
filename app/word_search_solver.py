@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Set, Dict
 from enum import Enum
 import sys
 
+
 class Direction(Enum):
     NORTH = (-1, 0)
     NORTHEAST = (-1, 1)
@@ -17,20 +18,21 @@ class Direction(Enum):
     def get_all_directions(cls) -> List[Direction]:
         return list(cls.__members__.values())
 
+
 class WordSearchSolver:
     def __init__(self, grid: List[List[str]], words: List[str]):
         """Auto-validates and runs solver on instantiation"""
         if not self._validate_grid(grid):
             print("Invalid grid format")
             sys.exit(1)
-            
+
         self.grid = grid
         self.words = words
         self.rows = len(grid)
         self.cols = len(grid[0]) if self.rows > 0 else 0
         self.results: Dict[str, Optional[List[Tuple[int, int]]]] = {}
         self.found_positions: Set[Tuple[int, int]] = set()
-        
+
         self._solve()
         self._show_results()
 
@@ -41,27 +43,27 @@ class WordSearchSolver:
             return False
 
         for row in grid:
-        # Each row must be a list
+            # Each row must be a list
             if not isinstance(row, list):
                 return False
             # Check each element in the row is a string
             for element in row:
                 if not isinstance(element, str):
                     return False
-                
+
         return all(len(row) == len(grid[0]) for row in grid)
-    
-    
 
     def _solve(self) -> None:
         """Internal solve operation"""
         for word in self.words:
-            if path := self._find_word(word):
-                self.results[word] = path
+            path = self._find_word(word)
+            self.results[word] = path
+            if path:
                 self.found_positions.update(path)
 
     def _find_word(self, word: str) -> Optional[List[Tuple[int, int]]]:
-        if not word: return None
+        if not word:
+            return None
         first_char = word[0].upper()
         for row in range(self.rows):
             for col in range(self.cols):
@@ -93,14 +95,14 @@ class WordSearchSolver:
                 print(f"Found '{word}' from {path[0]} to {path[-1]}")
             else:
                 print(f"Word '{word}' not found")
-        
+
         print("\nVisualization:")
         self._print_visual_grid()
 
     def _print_visual_grid(self) -> None:
         """Generate and display result grid"""
         visual_grid = [
-            [cell if (r, c) in self.found_positions else '.' 
+            [cell if (r, c) in self.found_positions else '.'
              for c, cell in enumerate(row)]
             for r, row in enumerate(self.grid)
         ]
